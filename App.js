@@ -1,0 +1,40 @@
+import React from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
+
+
+
+export default class App extends React.Component {
+
+  handlePressButton = () => {
+    console.log();
+  };
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>Open up App.js to start working on your app!</Text>
+        <Button
+          title="Home"
+          onPress={this.handlePressButton}
+        />
+        <Button
+          title="Sign In"
+          onPress={this.handlePressButton}
+        />
+        <Button
+          title="Sign Up"
+          onPress={this.handlePressButton}
+        />
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
