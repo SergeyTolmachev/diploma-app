@@ -1,33 +1,53 @@
 import React from 'react';
+import axios from "axios";
 
-import {Card, CardItem, Container, Header, Content, Button, Icon, Text,  H1, H3, Footer, FooterTab } from 'native-base';
+import {
+  Container,
+  Header,
+  Icon,
+  Content,
+  Text,
+  H3,
+} from 'native-base';
+
+import Review from './Review';
+import Reviews from './Reviews';
 
 export default class Home extends React.Component {
 
-  static navigationOptions = {
-    title: 'Главная',
+  state = {
+    reviews: [],
   }
+
+  static navigationOptions = {
+    tabBarLabel: 'Главная',
+    tabBarIcon: ({tintColor}) => (<Icon type="AntDesign" name='home' style={{color: tintColor}}/>),
+  }
+
+  componentDidMount = () => {
+    this.getReviews();
+  }
+
+  getReviews = () => {
+    axios.get('http://ec2-18-222-201-220.us-east-2.compute.amazonaws.com/api/review/list')
+      .then((reviews) => {
+        this.setState({reviews: reviews.data});
+      })
+      .catch(error => console.log(error));
+  };
 
   render() {
     return (
-          <Card>
-            <CardItem header>
-              <H3>Добро пожаловать!</H3>
-            </CardItem>
-            <CardItem>
-              <Text>Для удобной навигации Вы можете использовать навигацию внизу экрана</Text>
-            </CardItem>
-            <CardItem>
-              <Text>Для авторизации нажмите на </Text><Button info onPress={() => this.props.navigation.navigate('Signin')}><Text>Sign In</Text></Button>
-            </CardItem>
-            <CardItem>
-              <Text>Для регистрации нажмите на </Text><Button info onPress={() => this.props.navigation.navigate('Signup')}><Text>Sign Up</Text></Button>
-            </CardItem>
-            <CardItem>
-              <Text>Для оформления заказа нажмите на </Text>
-              <Button info onPress={() => this.props.navigation.navigate('MakeOrder')}><Text>Make an order</Text></Button>
-            </CardItem>
-          </Card>
+      <Container>
+        <Header>
+        </Header>
+        <Content style={{padding: 7}}>
+          <H3 style={{alignSelf: 'center'}}>Добро пожаловать!</H3>
+          <Text>Для удобной навигации Вы можете использовать навигацию внизу экрана</Text>
+          <Reviews reviews={this.state.reviews}/>
+          <Review getReviews={this.getReviews}/>
+        </Content>
+      </Container>
     );
   }
 }

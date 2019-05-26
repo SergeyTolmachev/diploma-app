@@ -4,19 +4,14 @@ import axios from 'axios';
 
 import {
   Button,
-  Card,
-  CardItem,
   Container,
   Content,
   Header,
-  Label,
   Item,
   Input,
   Form,
   H3,
-  Title,
   Text,
-  Segment
 } from 'native-base';
 
 import {AsyncStorage} from 'react-native';
@@ -41,7 +36,7 @@ class SignInForm extends React.Component {
                    secureTextEntry
             />
           </Item>
-          <Button disabled={!isActive} style={{alignSelf: 'center'}} onPress={handleSignIn}>
+          <Button disabled={!isActive} style={{alignSelf: 'center', marginTop: 5}} onPress={handleSignIn}>
             <Text>
               Авторизоваться
             </Text>
@@ -61,7 +56,7 @@ class Authorized extends React.Component {
           Вы успешно авторизованы и можете использовать все возможности приложения для вашего типа
           пользователя
         </Text>
-        <Button style={{alignSelf: 'center'}} onPress={handleExit}>
+        <Button style={{alignSelf: 'center', marginTop: 5}} onPress={handleExit}>
           <Text>
             Выйти
           </Text>
@@ -72,11 +67,6 @@ class Authorized extends React.Component {
 }
 
 export default class Signin extends React.Component {
-
-  static navigationOptions = {
-    title: 'Авторизация',
-  }
-
   state = {
     isAuth: false,
     login: '',
@@ -149,10 +139,7 @@ export default class Signin extends React.Component {
   render() {
     const {isAuth, login, password} = this.state;
     return (
-      <Container>
-        <Header>
-        </Header>
-        <Content>
+        <Content style={{padding: 7}}>
           <H3 style={{alignSelf: 'center'}}>Авторизация</H3>
 
           {
@@ -168,8 +155,6 @@ export default class Signin extends React.Component {
             isAuth && <Authorized handleExit={this.handleExit}/>
           }
         </Content>
-      </Container>
-
     );
   }
 }

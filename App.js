@@ -1,39 +1,26 @@
 import React from "react";
+import {View} from "react-native";
 import {AppLoading, Font} from 'expo';
 import { createBottomTabNavigator, createAppContainer} from "react-navigation";
-import {FluidNavigator} from "react-navigation-fluid-transitions"
 
 import {
-  Card,
-  CardItem,
   Container,
-  Header,
-  Content,
-  Button,
-  Icon,
-  Text,
-  H1,
-  H3,
-  Footer,
-  FooterTab,
-  Spinner
 } from 'native-base';
 
-
 import Home from './screens/Home';
-import Signin from './screens/Signin';
-import Signup from './screens/Signup';
+import Settings from './screens/Settings';
+import Signin from './screens/Settings';
 import Makeanorder from './screens/MakeOrder';
+import Reviews from './screens/Reviews';
+
+import axios from "axios/index";
 
 const AppNavigator = createBottomTabNavigator({
   Home: {
     screen: Home,
   },
-  Signin: {
-    screen: Signin,
-  },
-  Signup: {
-    screen: Signup,
+  Settings: {
+    screen: Settings,
   },
   MakeOrder: {
     screen: Makeanorder,
@@ -42,10 +29,10 @@ const AppNavigator = createBottomTabNavigator({
   initialRouteName: "Home",
   tabBarOptions: {
     labelStyle: {
-      fontSize: 14,
+      fontSize: 16,
     },
     style: {
-      height: 30,
+      height: 60,
     },
   },
 
@@ -57,14 +44,15 @@ class App extends React.Component {
   state = {
     activeButton: "1",
     loading: true,
+    reviews: [],
   };
 
-  componentDidMount() {
+  componentDidMount = () => {
     Font.loadAsync({
       Roboto: require("native-base/Fonts/Roboto.ttf"),
       Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
     }).then(() => {
-      this.setState({...this.state, loading: false})
+      this.setState({...this.state, loading: false});
     })
       .catch(error => console.log(error));
   }
@@ -79,7 +67,7 @@ class App extends React.Component {
       )
     }
     return (
-      <AppContainer/>
+        <AppContainer/>
     );
   }
 }
