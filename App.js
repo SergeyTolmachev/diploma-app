@@ -1,5 +1,4 @@
 import React from "react";
-import {View} from "react-native";
 import {AppLoading, Font} from 'expo';
 import { createBottomTabNavigator, createAppContainer} from "react-navigation";
 
@@ -9,24 +8,21 @@ import {
 
 import Home from './screens/Home';
 import Settings from './screens/Settings';
-import Signin from './screens/Settings';
 import Makeanorder from './screens/MakeOrder';
-import Reviews from './screens/Reviews';
-
-import axios from "axios/index";
 
 const AppNavigator = createBottomTabNavigator({
+  MakeOrder: {
+    screen: Makeanorder,
+  },
   Home: {
     screen: Home,
   },
   Settings: {
     screen: Settings,
   },
-  MakeOrder: {
-    screen: Makeanorder,
-  },
 }, {
-  initialRouteName: "Home",
+  resetOnBlur: true,
+  initialRouteName: "MakeOrder",
   tabBarOptions: {
     labelStyle: {
       fontSize: 16,

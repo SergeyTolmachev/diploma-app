@@ -4,18 +4,24 @@ import {Alert, AsyncStorage, View} from 'react-native';
 import {
   Header,
   Form,
+  List,
+  ListItem,
+  Separator,
   Picker,
   Container,
   Content,
   Icon,
   Text,
-  H3,
+  H1,
+  H2,
   Item,
   Input,
-  ListItem,
-  CheckBox,
+  H3,
   Button,
 } from 'native-base';
+import {DateTime} from "luxon";
+
+import {MENU} from '../config/constants';
 
 
 class OrderForm extends React.Component {
@@ -88,7 +94,7 @@ class OrderForm extends React.Component {
         },
       });
 
-      await AsyncStorage.setValue('order', result.data.hash);
+      await AsyncStorage.setItem('hash', result.data.hash);
 
       this.props.checkOrder(result.data.hash);
 
@@ -111,7 +117,7 @@ class OrderForm extends React.Component {
   render() {
     const {meat, green, isActive, name, address, email, phone} = this.state;
     return (
-      <Content style={{padding: 7}}>
+      <Content enableOnAndroid style={{padding: 7}}>
         <H3 style={{alignSelf: 'center'}}>Оформить заказ</H3>
         <Form>
           <Text>Выберите интересующие Вас ингредиенты, чтобы оформить ваш заказ</Text>
@@ -233,7 +239,7 @@ class OrderForm extends React.Component {
             <Input placeholder="Email" value={email} onChange={this.handleChangeInput('email')}/>
           </Item>
           <Item regular last>
-            <Input placeholder="Phone" value={phone} onChange={this.handleChangeInput('phone')}/>
+            <Input placeholder="Телефон" value={phone} onChange={this.handleChangeInput('phone')}/>
           </Item>
           <Button disabled={!isActive}
                   style={{alignSelf: 'center', marginTop: 5, marginBottom: 15}}
@@ -244,7 +250,84 @@ class OrderForm extends React.Component {
           </Button>
         </Form>
       </Content>
-      )
+    )
+  }
+}
+
+class OrderInfo extends React.Component {
+  render() {
+    let {address, email, phone, name, meat, green, size, thickness, id, createdAt, price} = this.props;
+
+    let date = DateTime.fromISO(createdAt).toFormat('D T');
+
+    const meats = [];
+    if (meat) {
+      Object.keys(meat).forEach((key, index) => {
+        if (meat[key]) {
+          meats.push(<Button block bordered style={{margin: 5}} key={index}><Text
+            key={index}>{MENU.meat[key]}</Text></Button>);
+        }
+      });
+    }
+    const greens = [];
+    if (green) {
+      Object.keys(green).forEach((key, index) => {
+        if (green[key]) {
+          greens.push(<Button block bordered style={{margin: 5}} key={index}><Text
+            key={index}>{MENU.green[key]}</Text></Button>);
+        }
+      });
+    }
+
+    address = address ? address : 'Неизвестно';
+    email = email ? email : 'Неизвестно';
+    phone = phone ? phone : 'Неизвестно';
+    name = name ? name : 'Неизвестно';
+    id = id ? id : 'Неизвестно';
+    price = price ? price : 'Бесценно';
+
+    return (
+      <Content style={{padding: 7}}>
+        <List style={{marginBottom: 15}}>
+          <Separator bordered>
+            <H3>Ваш заказ готовится</H3>
+          </Separator>
+          <ListItem><Text>Номер {id}</Text></ListItem>
+          <ListItem><Text>Дата заказа {date}</Text></ListItem>
+          <ListItem><Text>На имя {name}</Text></ListItem>
+          <ListItem><Text>Адрес: {address}</Text></ListItem>
+          <ListItem><Text>Email: {email}</Text></ListItem>
+          <ListItem><Text>Телефон: {phone}</Text></ListItem>
+          <Separator bordered>
+            <H3>Состав заказа:</H3>
+          </Separator>
+          <ListItem><Text>Размер: {MENU.size[size - 1]}</Text></ListItem>
+          <ListItem><Text>Толщина: {MENU.thickness[thickness - 1]}</Text></ListItem>
+          <ListItem>
+            <View>
+              <Text style={{alignSelf: 'center'}}>Добавленное мясо</Text>
+              <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}}>
+                {meats}
+              </View>
+            </View>
+          </ListItem>
+          <ListItem>
+            <View>
+              <Text style={{alignSelf: 'center'}}>Добавленные овощи и фрукты</Text>
+              <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}}>
+                {greens}
+              </View>
+            </View>
+          </ListItem>
+          <Separator bordered>
+            <H3>Стоимоcть:</H3>
+          </Separator>
+          <ListItem>
+            <Text>{price} рублей</Text>
+          </ListItem>
+        </List>
+      </Content>
+    )
   }
 }
 
@@ -257,32 +340,66 @@ export default class MakeOrder extends React.Component {
 
   state = {
     activeOrder: false,
+    meat: '',
+    green: '',
+    thickness: '',
+    size: '',
+    address: '',
+    email: '',
+    phone: '',
+    name: '',
+    id: '',
+    createdAt: '',
+    price: '',
   }
 
   checkOrder = async (hash) => {
     try {
       const result = await axios({
         method: 'post',
-        url: 'http://ec2-18-222-201-220.us-east-2.compute.amazonaws.com/api/order/',
+        url: 'http://ec2-18-222-201-220.us-east-2.compute.amazonaws.com/api/order/check',
         data: {
           hash,
         },
       });
       if (result) {
-        this.setState({ ...this.state, activeOrder: true });
+        const {data} = result;
+        const {address, email, phone, name, meat, green, size, thickness, id, createdAt, price} = data;
+        this.setState({
+          ...this.state,
+          activeOrder: true,
+          meat,
+          green,
+          size,
+          thickness,
+          address,
+          email,
+          phone,
+          name,
+          id,
+          createdAt,
+          price
+        });
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  componentDidMount = () => {
-    this.checkOrder();
+  componentDidMount = async () => {
+    try {
+      const hash = await AsyncStorage.getItem('hash');
+      if (hash) {
+        this.checkOrder(hash);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   render() {
 
-  const { activeOrder } = this.state;
+    const {activeOrder, address, email, phone, name, meat, green, size, thickness, id, createdAt, price} = this.state;
     return (
       <Container>
         <Header>
@@ -291,7 +408,19 @@ export default class MakeOrder extends React.Component {
           !activeOrder && <OrderForm checkOrder={this.checkOrder}/>
         }
         {
-          activeOrder && <Text>У Вас есть активный заказ</Text>
+          activeOrder && <OrderInfo
+            address={address}
+            email={email}
+            phone={phone}
+            name={name}
+            meat={meat}
+            green={green}
+            size={size}
+            thickness={thickness}
+            id={id}
+            createdAt={createdAt}
+            price={price}
+          />
         }
       </Container>
     );

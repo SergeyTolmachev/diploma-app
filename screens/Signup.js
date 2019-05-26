@@ -87,9 +87,6 @@ export default class SignInForm extends React.Component {
           <Item regular last>
             <Input placeholder="email" value={email} onChange={this.handleChangeInput('email')}/>
           </Item>
-          <Item regular last>
-            <Input placeholder="инвайт" value={invite} onChange={this.handleChangeInput('invite')}/>
-          </Item>
           <Button disabled={!isActive} style={{alignSelf: 'center', marginTop: 5}} onPress={this.handleSignUp}>
             <Text>
               Регистрация

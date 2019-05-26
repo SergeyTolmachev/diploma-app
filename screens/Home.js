@@ -20,8 +20,8 @@ export default class Home extends React.Component {
   }
 
   static navigationOptions = {
-    tabBarLabel: 'Главная',
-    tabBarIcon: ({tintColor}) => (<Icon type="AntDesign" name='home' style={{color: tintColor}}/>),
+    tabBarLabel: 'Отзывы',
+    tabBarIcon: ({tintColor}) => (<Icon type="AntDesign" name='contacts' style={{color: tintColor}}/>),
   }
 
   componentDidMount = () => {
@@ -41,7 +41,7 @@ export default class Home extends React.Component {
       <Container>
         <Header>
         </Header>
-        <Content style={{padding: 7}}>
+        <Content enableOnAndroid style={{padding: 7}}>
           <H3 style={{alignSelf: 'center'}}>Добро пожаловать!</H3>
           <Text>Для удобной навигации Вы можете использовать навигацию внизу экрана</Text>
           <Reviews reviews={this.state.reviews}/>

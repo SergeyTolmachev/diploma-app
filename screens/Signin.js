@@ -139,7 +139,7 @@ export default class Signin extends React.Component {
   render() {
     const {isAuth, login, password} = this.state;
     return (
-        <Content style={{padding: 7}}>
+        <Content enableOnAndroid style={{padding: 7}}>
           <H3 style={{alignSelf: 'center'}}>Авторизация</H3>
 
           {
